@@ -1,4 +1,4 @@
-# Browser SDK
+# Steuerbot Browser SDK
 
 Browser SDK for building amazing web bots.
 
