@@ -1,6 +1,6 @@
-# client
+# Browser SDK
 
-Client library for building amazing bot web apps
+Browser SDK for building amazing web bots.
 
 ## Installation
 
@@ -21,7 +21,7 @@ Add the script at the end of your body tag and provide an data-url attribute lik
 ```html
 <body>
   ...
-  <script src="client.min.js" data-url="https://api.steuerbot.com"></script>
+  <script src="steuerbot-browser-sdk.min.js" data-url="https://api.steuerbot.com"></script>
 </body>
 ```
 
@@ -30,13 +30,15 @@ Optional: Use the default style by adding the stylesheet to your website:
 ```html
 <head>
   ...
-  <link rel="stylesheet" href="client.min.css" />
+  <link rel="stylesheet" href="steuerbot-browser-sdk.min.css" />
   ...
 </head>
 ```
 
 ## Usage
 
-### Download a pdf
+### Download a declaration pdf
 
-client.downloadPdf(login, password);
+```javascript
+steuerbot.downloadPdf(login, password);
+```

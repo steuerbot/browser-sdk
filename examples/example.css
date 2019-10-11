@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Arial;
+}
+
+.example {
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 20px;
+}
+
+.example ul {
+  margin-top: 30px;
+  margin-left: 30px;
+}

@@ -1,16 +1,27 @@
 {
-  "name": "client",
+  "name": "@steuerbot/browser-sdk",
   "version": "1.0.0",
-  "description": "Client library for building amazing bot web apps",
-  "main": "dist/client.js",
-  "module": "dist/client.es.js",
+  "description": "Browser SDK for building amazing web bots",
+  "main": "dist/steuerbot-browser-sdk.js",
+  "module": "dist/steuerbot-browser-sdk.es.js",
+  "types": "dist/steuerbot-browser-sdk.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "examples",
+    "package.json",
+    "README.md",
+    "LICENSE"
   ],
-  "types": "dist/client.d.ts",
   "author": "Steuerbot GmbH",
   "license": "MIT",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steuerbot/browser-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/steuerbot/browser-sdk/issues"
+  },
   "scripts": {
     "build": "yarn js && yarn css",
     "watch": "concurrently 'yarn js-watch' 'yarn css-watch'",
@@ -18,8 +29,8 @@
     "lint": "tsc --noEmit -p . | grep -E \"^(src|__tests__)/\"; eslint 'src/**/*.ts'",
     "js": "rollup -c",
     "js-watch": "rollup -cw",
-    "css": "stylus -c -u nib --import nib style/index.styl --out dist/client.min.css",
-    "css-watch": "stylus -w -u nib --import nib style/index.styl --out dist/client.min.css"
+    "css": "stylus -c -u nib --import nib style/index.styl --out dist/steuerbot-browser-sdk.min.css",
+    "css-watch": "stylus -w -u nib --import nib style/index.styl --out dist/steuerbot-browser-sdk.min.css"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.1",
