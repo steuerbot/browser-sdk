@@ -12,13 +12,13 @@ This is the Browser SDK of Steuerbot for building amazing web bots.
 
 ## 👨‍💻 Installation
 
-```
+```shell script
 npm install client --save
 ```
 
 or
 
-```
+```shell script
 yarn add client
 ```
 
@@ -55,20 +55,27 @@ steuerbot.downloadPdf(login, password);
 
 The main purpose of this repository to provide the necessary tools and features for building great bots. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bugfixes and improvements. Read below to learn how you can take part in improving the Browser SDK of Steuerbot.
 
+### Structure
+
+Typescript is used for development. All typescript files are in the `src` folder.  
+For generating the stylesheet we use stylus. The styling is defined in `style/index.styl`.
+
 ### Development
 
-Install and build the files with
+You can install and build the files with the following commands:
 
-```
+```shell script
 yarn install
 yarn build
 ```
 
-For development you can use
+For easier development you can use
 
-```
+```shell script
 yarn watch
 ```
+
+This generates the .js and .css files on every change.
 
 ## 📄 License
 
