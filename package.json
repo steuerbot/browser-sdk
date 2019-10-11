@@ -1,0 +1,48 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "Client library for building amazing bot web apps",
+  "main": "dist/client.js",
+  "module": "dist/client.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/client.d.ts",
+  "author": "Steuerbot GmbH",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "yarn js && yarn css",
+    "watch": "concurrently 'yarn js-watch' 'yarn css-watch'",
+    "test": "jest",
+    "lint": "tsc --noEmit -p . | grep -E \"^(src|__tests__)/\"; eslint 'src/**/*.ts'",
+    "js": "rollup -c",
+    "js-watch": "rollup -cw",
+    "css": "stylus -c -u nib --import nib style/index.styl --out dist/client.min.css",
+    "css-watch": "stylus -w -u nib --import nib style/index.styl --out dist/client.min.css"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.1",
+    "@types/jest": "^24.0.18",
+    "@typescript-eslint/eslint-plugin": "^2.3.3",
+    "@typescript-eslint/parser": "^2.3.3",
+    "concurrently": "^5.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.9.0",
+    "nib": "^1.1.2",
+    "prettier": "^1.18.2",
+    "rollup": "^1.23.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-typescript2": "^0.24.3",
+    "stylus": "^0.54.7",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "file-saver": "2.0.2"
+  }
+}
