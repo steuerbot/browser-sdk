@@ -12,20 +12,32 @@ const sha512 = async (str): Promise<string> => {
   const hashHex: string = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
 };
-const showErrorAlert = (): void => alert('Fehler');
+
+export enum PdfError {
+  INVALID_PARAMS = 'invalid_params',
+  INVALID_RESPONSE = 'invalid_response',
+  DOWNLOAD_ERROR = 'download_error',
+}
 
 /**
  * Download declaration pdf
  * @param login
  * @param password
+ * @param successHandler
+ * @param errorHandler
  */
-export const downloadPdf = async (login, password): Promise<void> => {
+export const downloadPdf = async (
+  login: string,
+  password: string,
+  successHandler: () => void,
+  errorHandler: (err: PdfError) => void,
+): Promise<void> => {
   const urlParams = new URLSearchParams(window.location.search);
   const submitId = urlParams.get(submitIdParamKey);
   const baseUrl = urlParams.get(targetParamKey) || defaultBaseUrl;
+
   if (!baseUrl || !submitId) {
-    showErrorAlert();
-    return;
+    errorHandler(PdfError.INVALID_PARAMS);
   }
   const url = baseUrl + `/declaration/download?sid=${submitId}`;
   const hash = await sha512(password);
@@ -33,14 +45,16 @@ export const downloadPdf = async (login, password): Promise<void> => {
   const xhr = new XMLHttpRequest();
   xhr.open('GET', url);
   xhr.setRequestHeader('Authorization', `Basic ${authHash}`);
-  xhr.onerror = showErrorAlert;
-  xhr.onload = (): void => {
+  xhr.onerror = () => {
+    errorHandler(PdfError.DOWNLOAD_ERROR);
+  };
+  xhr.onload = (): any => {
     try {
       const { filename, data } = JSON.parse(xhr.response);
       saveAs(new Blob([atob(data)], { type: 'application/pdf' }), filename);
+      successHandler();
     } catch {
-      showErrorAlert();
-      return;
+      errorHandler(PdfError.INVALID_RESPONSE);
     }
   };
   xhr.send();
