@@ -2,4 +2,5 @@
 .rpt2_cache
 .vscode
 node_modules
-dist
+#uncomment following line and remove folder from project if package is published in npm repository
+#dist

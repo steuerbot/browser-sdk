@@ -4,7 +4,7 @@
   "description": "Browser SDK for building amazing web bots",
   "main": "dist/steuerbot-browser-sdk.js",
   "module": "dist/steuerbot-browser-sdk.es.js",
-  "types": "dist/steuerbot-browser-sdk.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "examples",
