@@ -16,10 +16,10 @@ const showErrorAlert = (): void => alert('Fehler');
 
 /**
  * Download declaration pdf
- * @param login
- * @param password
+ * @param {string} login
+ * @param {string} password
  */
-export const downloadPdf = async (login, password): Promise<void> => {
+export const downloadPdf = async (login: string, password: string): Promise<void> => {
   const urlParams = new URLSearchParams(window.location.search);
   const submitId = urlParams.get(submitIdParamKey);
   const baseUrl = urlParams.get(targetParamKey) || defaultBaseUrl;

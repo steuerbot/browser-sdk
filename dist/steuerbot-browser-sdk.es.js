@@ -95,8 +95,8 @@ var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function 
 var showErrorAlert = function () { return alert('Fehler'); };
 /**
  * Download declaration pdf
- * @param login
- * @param password
+ * @param {string} login
+ * @param {string} password
  */
 var downloadPdf = function (login, password) { return __awaiter(void 0, void 0, void 0, function () {
     var urlParams, submitId, baseUrl, url, hash, authHash, xhr;

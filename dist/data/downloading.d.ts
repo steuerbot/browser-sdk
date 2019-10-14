@@ -1,6 +1,6 @@
 /**
  * Download declaration pdf
- * @param login
- * @param password
+ * @param {string} login
+ * @param {string} password
  */
-export declare const downloadPdf: (login: any, password: any) => Promise<void>;
+export declare const downloadPdf: (login: string, password: string) => Promise<void>;
