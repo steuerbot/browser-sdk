@@ -102,6 +102,8 @@ var PdfError;
  * Download declaration pdf
  * @param login
  * @param password
+ * @param successHandler
+ * @param errorHandler
  */
 var downloadPdf = function (login, password, successHandler, errorHandler) { return __awaiter(void 0, void 0, void 0, function () {
     var urlParams, submitId, baseUrl, url, hash, authHash, xhr;
