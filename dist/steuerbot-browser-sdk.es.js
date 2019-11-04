@@ -76,9 +76,6 @@ var getConfig = function () {
     return config;
 };
 
-var defaultBaseUrl = getConfig().url;
-var submitIdParamKey = 'sid';
-var targetParamKey = 'target';
 var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function () {
     var buf, hashArray, hashHex;
     return __generator(this, function (_a) {
@@ -92,47 +89,48 @@ var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
-var showErrorAlert = function () { return alert('Fehler'); };
 /**
  * Download declaration pdf
- * @param {string} login
- * @param {string} password
  */
-var downloadPdf = function (login, password) { return __awaiter(void 0, void 0, void 0, function () {
-    var urlParams, submitId, baseUrl, url, hash, authHash, xhr;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                urlParams = new URLSearchParams(window.location.search);
-                submitId = urlParams.get(submitIdParamKey);
-                baseUrl = urlParams.get(targetParamKey) || defaultBaseUrl;
-                if (!baseUrl || !submitId) {
-                    showErrorAlert();
+var downloadPdf = function (_a) {
+    var login = _a.login, password = _a.password, submitId = _a.submitId, baseUrl = _a.baseUrl;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var url, hash, authHash, xhr;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    baseUrl = baseUrl || getConfig().url;
+                    if (!baseUrl) {
+                        throw new Error('Steuerbot-Browser-SDK: No base url given');
+                    }
+                    if (!submitId) {
+                        throw new Error('Steuerbot-Browser-SDK: No submit id given');
+                    }
+                    url = baseUrl + ("/declaration/download?sid=" + submitId);
+                    return [4 /*yield*/, sha512(password)];
+                case 1:
+                    hash = _b.sent();
+                    authHash = btoa(login + ":" + hash);
+                    xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.setRequestHeader('Authorization', "Basic " + authHash);
+                    xhr.onerror = function () {
+                        throw new Error('Steuerbot-Browser-SDK: Error fetching pdf');
+                    };
+                    xhr.onload = function () {
+                        try {
+                            var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
+                            FileSaver_min_1(new Blob([atob(data)], { type: 'application/pdf' }), filename);
+                        }
+                        catch (_b) {
+                            throw new Error('Steuerbot-Browser-SDK: Error saving pdf');
+                        }
+                    };
+                    xhr.send();
                     return [2 /*return*/];
-                }
-                url = baseUrl + ("/declaration/download?sid=" + submitId);
-                return [4 /*yield*/, sha512(password)];
-            case 1:
-                hash = _a.sent();
-                authHash = btoa(login + ":" + hash);
-                xhr = new XMLHttpRequest();
-                xhr.open('GET', url);
-                xhr.setRequestHeader('Authorization', "Basic " + authHash);
-                xhr.onerror = showErrorAlert;
-                xhr.onload = function () {
-                    try {
-                        var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
-                        FileSaver_min_1(new Blob([atob(data)], { type: 'application/pdf' }), filename);
-                    }
-                    catch (_b) {
-                        showErrorAlert();
-                        return;
-                    }
-                };
-                xhr.send();
-                return [2 /*return*/];
-        }
+            }
+        });
     });
-}); };
+};
 
 export { downloadPdf };
