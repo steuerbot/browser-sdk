@@ -48,7 +48,11 @@ Optional: Use the default style by adding the stylesheet to your website:
 ### Download a declaration pdf
 
 ```javascript
-steuerbot.downloadPdf(login, password);
+steuerbot.downloadPdf({
+  username,
+  password,
+  submitId,
+});
 ```
 
 ## 👏 How to Contribute

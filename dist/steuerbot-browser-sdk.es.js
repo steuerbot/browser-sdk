@@ -63,16 +63,22 @@ var FileSaver_min = createCommonjsModule(function (module, exports) {
 });
 var FileSaver_min_1 = FileSaver_min.saveAs;
 
-var config = null;
+var config = {
+    url: null,
+};
+// get config out of current script tag
+var currentScript = document.currentScript;
+if (!currentScript) {
+    var scripts = document.getElementsByTagName('script');
+    currentScript = scripts[scripts.length - 1];
+}
+if (currentScript.dataset.url) {
+    config.url = currentScript.dataset.url;
+}
 /**
  * Lazy load config
  */
 var getConfig = function () {
-    if (!config) {
-        var scripts = document.getElementsByTagName('script');
-        var currentScript = scripts[scripts.length - 1];
-        config = currentScript.dataset;
-    }
     return config;
 };
 
@@ -91,26 +97,37 @@ var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function 
 }); };
 /**
  * Download declaration pdf
+ * @param {Object} options - Options object
+ * @param {string} username - The username
+ * @param {string} password - The password
+ * @param {string} submitId - The submit identifier
+ * @param {string} [baseUrl] - The base url for the api
  */
 var downloadPdf = function (_a) {
-    var login = _a.login, password = _a.password, submitId = _a.submitId, baseUrl = _a.baseUrl;
+    var username = _a.username, password = _a.password, submitId = _a.submitId, baseUrl = _a.baseUrl;
     return __awaiter(void 0, void 0, void 0, function () {
         var url, hash, authHash, xhr;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    baseUrl = baseUrl || getConfig().url;
-                    if (!baseUrl) {
-                        throw new Error('Steuerbot-Browser-SDK: No base url given');
+                    if (!username) {
+                        throw new Error('Steuerbot-Browser-SDK: No username given');
+                    }
+                    if (!password) {
+                        throw new Error('Steuerbot-Browser-SDK: No password given');
                     }
                     if (!submitId) {
-                        throw new Error('Steuerbot-Browser-SDK: No submit id given');
+                        throw new Error('Steuerbot-Browser-SDK: No submitId given');
+                    }
+                    baseUrl = baseUrl || getConfig().url;
+                    if (!baseUrl) {
+                        throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
                     }
                     url = baseUrl + ("/declaration/download?sid=" + submitId);
                     return [4 /*yield*/, sha512(password)];
                 case 1:
                     hash = _b.sent();
-                    authHash = btoa(login + ":" + hash);
+                    authHash = btoa(username + ":" + hash);
                     xhr = new XMLHttpRequest();
                     xhr.open('GET', url);
                     xhr.setRequestHeader('Authorization', "Basic " + authHash);
