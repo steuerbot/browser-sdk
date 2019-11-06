@@ -1,4 +1,16 @@
-let config = null;
+const config: Config = {
+  url: null,
+};
+
+// get config out of current script tag
+let { currentScript } = document;
+if (!currentScript) {
+  const scripts = document.getElementsByTagName('script');
+  currentScript = scripts[scripts.length - 1];
+}
+if (currentScript.dataset.url) {
+  config.url = currentScript.dataset.url;
+}
 
 interface Config {
   url: string;
@@ -8,10 +20,5 @@ interface Config {
  * Lazy load config
  */
 export const getConfig = (): Config => {
-  if (!config) {
-    const scripts = document.getElementsByTagName('script');
-    const currentScript = scripts[scripts.length - 1];
-    config = currentScript.dataset;
-  }
   return config;
 };
