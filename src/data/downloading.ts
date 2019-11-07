@@ -47,16 +47,21 @@ export const downloadPdf = async ({
   const xhr = new XMLHttpRequest();
   xhr.open('GET', url);
   xhr.setRequestHeader('Authorization', `Basic ${authHash}`);
-  xhr.onerror = (): void => {
-    throw new Error('Steuerbot-Browser-SDK: Error fetching pdf');
-  };
-  xhr.onload = (): void => {
-    try {
-      const { filename, data } = JSON.parse(xhr.response);
-      saveAs(base64toBlob(data, 'application/pdf'), filename);
-    } catch {
-      throw new Error('Steuerbot-Browser-SDK: Error saving pdf');
-    }
-  };
+  const promise = new Promise((resolve, reject) => {
+    xhr.onerror = (): void => {
+      reject('Steuerbot-Browser-SDK: Error fetching pdf');
+    };
+    xhr.onload = (): void => {
+      try {
+        const { filename, data } = JSON.parse(xhr.response);
+        saveAs(base64toBlob(data, 'application/pdf'), filename);
+        resolve();
+      } catch {
+        reject('Steuerbot-Browser-SDK: Error saving pdf');
+      }
+    };
+  });
   xhr.send();
+  // wait for download to finish
+  await promise;
 };

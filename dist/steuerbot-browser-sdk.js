@@ -90,6 +90,7 @@
 
     /**
      * Create a blob out of a base64 string
+     * @link https://stackoverflow.com/a/16245768/2422977
      *
      * @param {string} b64Data
      * @param {string} [contentType]
@@ -137,7 +138,7 @@
     var downloadPdf = function (_a) {
         var username = _a.username, password = _a.password, submitId = _a.submitId, baseUrl = _a.baseUrl;
         return __awaiter(void 0, void 0, void 0, function () {
-            var url, hash, authHash, xhr;
+            var url, hash, authHash, xhr, promise;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -162,19 +163,27 @@
                         xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
                         xhr.setRequestHeader('Authorization', "Basic " + authHash);
-                        xhr.onerror = function () {
-                            throw new Error('Steuerbot-Browser-SDK: Error fetching pdf');
-                        };
-                        xhr.onload = function () {
-                            try {
-                                var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
-                                FileSaver_min_1(base64toBlob(data, 'application/pdf'), filename);
-                            }
-                            catch (_b) {
-                                throw new Error('Steuerbot-Browser-SDK: Error saving pdf');
-                            }
-                        };
+                        promise = new Promise(function (resolve, reject) {
+                            xhr.onerror = function () {
+                                reject('Steuerbot-Browser-SDK: Error fetching pdf');
+                            };
+                            xhr.onload = function () {
+                                try {
+                                    var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
+                                    FileSaver_min_1(base64toBlob(data, 'application/pdf'), filename);
+                                    resolve();
+                                }
+                                catch (_b) {
+                                    reject('Steuerbot-Browser-SDK: Error saving pdf');
+                                }
+                            };
+                        });
                         xhr.send();
+                        // wait for download to finish
+                        return [4 /*yield*/, promise];
+                    case 2:
+                        // wait for download to finish
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });
