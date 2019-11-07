@@ -82,6 +82,31 @@ var getConfig = function () {
     return config;
 };
 
+/**
+ * Create a blob out of a base64 string
+ *
+ * @param {string} b64Data
+ * @param {string} [contentType]
+ * @param {number} [sliceSize]
+ */
+var base64toBlob = function (b64Data, contentType, sliceSize) {
+    if (contentType === void 0) { contentType = ''; }
+    if (sliceSize === void 0) { sliceSize = 512; }
+    var byteCharacters = atob(b64Data);
+    var byteArrays = [];
+    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        var slice = byteCharacters.slice(offset, offset + sliceSize);
+        var byteNumbers = new Array(slice.length);
+        for (var i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        var byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+    var blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+};
+
 var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function () {
     var buf, hashArray, hashHex;
     return __generator(this, function (_a) {
@@ -137,7 +162,7 @@ var downloadPdf = function (_a) {
                     xhr.onload = function () {
                         try {
                             var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
-                            FileSaver_min_1(new Blob([atob(data)], { type: 'application/pdf' }), filename);
+                            FileSaver_min_1(base64toBlob(data, 'application/pdf'), filename);
                         }
                         catch (_b) {
                             throw new Error('Steuerbot-Browser-SDK: Error saving pdf');

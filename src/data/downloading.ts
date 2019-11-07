@@ -1,5 +1,6 @@
 import { saveAs } from 'file-saver';
 import { getConfig } from '../config';
+import { base64toBlob } from './decoding';
 
 const sha512 = async (str): Promise<string> => {
   const buf = await crypto.subtle.digest('SHA-512', new TextEncoder().encode(str));
@@ -52,7 +53,7 @@ export const downloadPdf = async ({
   xhr.onload = (): void => {
     try {
       const { filename, data } = JSON.parse(xhr.response);
-      saveAs(new Blob([atob(data)], { type: 'application/pdf' }), filename);
+      saveAs(base64toBlob(data, 'application/pdf'), filename);
     } catch {
       throw new Error('Steuerbot-Browser-SDK: Error saving pdf');
     }
