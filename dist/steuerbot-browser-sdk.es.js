@@ -67,13 +67,15 @@ var config = {
     url: null,
 };
 // get config out of current script tag
-var currentScript = document.currentScript;
-if (!currentScript) {
-    var scripts = document.getElementsByTagName('script');
-    currentScript = scripts[scripts.length - 1];
-}
-if (currentScript.dataset.url) {
-    config.url = currentScript.dataset.url;
+if (typeof document !== 'undefined') {
+    var currentScript = document.currentScript;
+    if (!currentScript) {
+        var scripts = document.getElementsByTagName('script');
+        currentScript = scripts[scripts.length - 1];
+    }
+    if (currentScript.dataset.url) {
+        config.url = currentScript.dataset.url;
+    }
 }
 /**
  * Lazy load config

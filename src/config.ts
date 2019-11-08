@@ -3,13 +3,15 @@ const config: Config = {
 };
 
 // get config out of current script tag
-let { currentScript } = document;
-if (!currentScript) {
-  const scripts = document.getElementsByTagName('script');
-  currentScript = scripts[scripts.length - 1];
-}
-if (currentScript.dataset.url) {
-  config.url = currentScript.dataset.url;
+if (typeof document !== 'undefined') {
+  let { currentScript } = document;
+  if (!currentScript) {
+    const scripts = document.getElementsByTagName('script');
+    currentScript = scripts[scripts.length - 1];
+  }
+  if (currentScript.dataset.url) {
+    config.url = currentScript.dataset.url;
+  }
 }
 
 interface Config {
