@@ -1,6 +1,7 @@
 import { saveAs } from 'file-saver';
 import { getConfig } from '../config';
 import { base64toBlob } from './decoding';
+import { HttpError } from '../errors/HttpError';
 
 const sha512 = async (str): Promise<string> => {
   const buf = await crypto.subtle.digest('SHA-512', new TextEncoder().encode(str));
@@ -49,15 +50,20 @@ export const downloadPdf = async ({
   xhr.setRequestHeader('Authorization', `Basic ${authHash}`);
   const promise = new Promise((resolve, reject) => {
     xhr.onerror = (): void => {
-      reject('Steuerbot-Browser-SDK: Error fetching pdf');
+      reject(new HttpError(xhr.status));
     };
     xhr.onload = (): void => {
+      if (xhr.status >= 400) {
+        reject(new HttpError(xhr.status));
+        return;
+      }
+
       try {
         const { filename, data } = JSON.parse(xhr.response);
         saveAs(base64toBlob(data, 'application/pdf'), filename);
         resolve();
       } catch {
-        reject('Steuerbot-Browser-SDK: Error saving pdf');
+        reject(new Error('Steuerbot-Browser-SDK: Error saving pdf'));
       }
     };
   });
