@@ -116,6 +116,13 @@
         return blob;
     };
 
+    function HttpError(status) {
+        this.name = 'HttpError';
+        this.message = "HttpError " + status;
+        this.statusCode = status;
+    }
+    HttpError.prototype = Error.prototype;
+
     var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function () {
         var buf, hashArray, hashHex;
         return __generator(this, function (_a) {
@@ -167,16 +174,20 @@
                         xhr.setRequestHeader('Authorization', "Basic " + authHash);
                         promise = new Promise(function (resolve, reject) {
                             xhr.onerror = function () {
-                                reject('Steuerbot-Browser-SDK: Error fetching pdf');
+                                reject(new HttpError(xhr.status));
                             };
                             xhr.onload = function () {
+                                if (xhr.status >= 400) {
+                                    reject(new HttpError(xhr.status));
+                                    return;
+                                }
                                 try {
                                     var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
                                     FileSaver_min_1(base64toBlob(data, 'application/pdf'), filename);
                                     resolve();
                                 }
                                 catch (_b) {
-                                    reject('Steuerbot-Browser-SDK: Error saving pdf');
+                                    reject(new Error('Steuerbot-Browser-SDK: Error saving pdf'));
                                 }
                             };
                         });
@@ -192,6 +203,7 @@
         });
     };
 
+    exports.HttpError = HttpError;
     exports.downloadPdf = downloadPdf;
 
     Object.defineProperty(exports, '__esModule', { value: true });
