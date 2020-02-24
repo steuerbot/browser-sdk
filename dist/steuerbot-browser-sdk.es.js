@@ -84,6 +84,19 @@ var getConfig = function () {
     return config;
 };
 
+var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function () {
+    var buf, hashArray, hashHex;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, crypto.subtle.digest('SHA-512', new TextEncoder().encode(str))];
+            case 1:
+                buf = _a.sent();
+                hashArray = Array.from(new Uint8Array(buf));
+                hashHex = hashArray.map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+                return [2 /*return*/, hashHex];
+        }
+    });
+}); };
 /**
  * Create a blob out of a base64 string
  * @link https://stackoverflow.com/a/16245768/2422977
@@ -110,26 +123,51 @@ var base64toBlob = function (b64Data, contentType, sliceSize) {
     return blob;
 };
 
-function HttpError(status) {
-    this.name = 'HttpError';
-    this.message = "HttpError " + status;
-    this.statusCode = status;
-}
-HttpError.prototype = Error.prototype;
-
-var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function () {
-    var buf, hashArray, hashHex;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, crypto.subtle.digest('SHA-512', new TextEncoder().encode(str))];
-            case 1:
-                buf = _a.sent();
-                hashArray = Array.from(new Uint8Array(buf));
-                hashHex = hashArray.map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
-                return [2 /*return*/, hashHex];
-        }
+var fetchResponse = function (url, _a) {
+    var _b = _a === void 0 ? {} : _a, _c = _b.method, method = _c === void 0 ? 'GET' : _c, headers = _b.headers;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var xhr, key, promise;
+        return __generator(this, function (_d) {
+            xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+            if (headers) {
+                for (key in headers) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+            promise = new Promise(function (resolve, reject) {
+                xhr.onerror = function () {
+                    reject(new HttpError(xhr.status));
+                };
+                xhr.onload = function () {
+                    if (xhr.status >= 400) {
+                        reject(new HttpError(xhr.status));
+                        return;
+                    }
+                    resolve(xhr.response);
+                };
+            });
+            xhr.send();
+            // wait for download to finish
+            return [2 /*return*/, promise];
+        });
     });
-}); };
+};
+var fetchJSON = function (url, options) {
+    if (options === void 0) { options = {}; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fetchResponse(url, options)];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, JSON.parse(response)];
+            }
+        });
+    });
+};
+
 /**
  * Download declaration pdf
  * @param {Object} options - Options object
@@ -141,9 +179,9 @@ var sha512 = function (str) { return __awaiter(void 0, void 0, void 0, function 
 var downloadPdf = function (_a) {
     var username = _a.username, password = _a.password, submitId = _a.submitId, baseUrl = _a.baseUrl;
     return __awaiter(void 0, void 0, void 0, function () {
-        var url, hash, authHash, xhr, promise;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var url, hash, authHash, _b, filename, data;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     if (!username) {
                         throw new Error('Steuerbot-Browser-SDK: No username given');
@@ -161,35 +199,62 @@ var downloadPdf = function (_a) {
                     url = baseUrl + ("/declaration/download?sid=" + submitId);
                     return [4 /*yield*/, sha512(password)];
                 case 1:
-                    hash = _b.sent();
+                    hash = _c.sent();
                     authHash = btoa(username + ":" + hash);
-                    xhr = new XMLHttpRequest();
-                    xhr.open('GET', url);
-                    xhr.setRequestHeader('Authorization', "Basic " + authHash);
-                    promise = new Promise(function (resolve, reject) {
-                        xhr.onerror = function () {
-                            reject(new HttpError(xhr.status));
-                        };
-                        xhr.onload = function () {
-                            if (xhr.status >= 400) {
-                                reject(new HttpError(xhr.status));
-                                return;
-                            }
-                            try {
-                                var _a = JSON.parse(xhr.response), filename = _a.filename, data = _a.data;
-                                FileSaver_min_1(base64toBlob(data, 'application/pdf'), filename);
-                                resolve();
-                            }
-                            catch (_b) {
-                                reject(new Error('Steuerbot-Browser-SDK: Error saving pdf'));
-                            }
-                        };
-                    });
-                    xhr.send();
-                    // wait for download to finish
-                    return [4 /*yield*/, promise];
+                    return [4 /*yield*/, fetchJSON(url, {
+                            headers: {
+                                Authorization: "Basic " + authHash,
+                            },
+                        })];
                 case 2:
-                    // wait for download to finish
+                    _b = _c.sent(), filename = _b.filename, data = _b.data;
+                    try {
+                        FileSaver_min_1(base64toBlob(data, 'application/pdf'), filename);
+                    }
+                    catch (_d) {
+                        throw new Error('Steuerbot-Browser-SDK: Error saving pdf');
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+};
+
+/**
+ * Reset user password
+ * @param {string} id - The user identifier
+ * @param {string} password - The new password of user
+ * @param {string} [baseUrl] - The base url for the api
+ */
+var resetPassword = function (_a) {
+    var id = _a.id, password = _a.password, baseUrl = _a.baseUrl;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var url, hash, authHash;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    if (!id) {
+                        throw new Error('Steuerbot-Browser-SDK: No id given');
+                    }
+                    if (!password) {
+                        throw new Error('Steuerbot-Browser-SDK: No password given');
+                    }
+                    baseUrl = baseUrl || getConfig().url;
+                    if (!baseUrl) {
+                        throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+                    }
+                    url = baseUrl + "/password/reset";
+                    return [4 /*yield*/, sha512(password)];
+                case 1:
+                    hash = _b.sent();
+                    authHash = btoa(id + ":" + hash);
+                    return [4 /*yield*/, fetchResponse(url, {
+                            method: 'PUT',
+                            headers: {
+                                Authorization: "Basic " + authHash,
+                            },
+                        })];
+                case 2:
                     _b.sent();
                     return [2 /*return*/];
             }
@@ -197,4 +262,11 @@ var downloadPdf = function (_a) {
     });
 };
 
-export { HttpError, downloadPdf };
+function HttpError(status) {
+    this.name = 'HttpError';
+    this.message = "HttpError " + status;
+    this.statusCode = status;
+}
+HttpError.prototype = Error.prototype;
+
+export { HttpError, downloadPdf, resetPassword };

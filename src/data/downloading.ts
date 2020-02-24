@@ -1,14 +1,7 @@
 import { saveAs } from 'file-saver';
 import { getConfig } from '../config';
-import { base64toBlob } from './decoding';
-import { HttpError } from '../errors/HttpError';
-
-const sha512 = async (str): Promise<string> => {
-  const buf = await crypto.subtle.digest('SHA-512', new TextEncoder().encode(str));
-  const hashArray = Array.from(new Uint8Array(buf));
-  const hashHex: string = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
-};
+import { base64toBlob, sha512 } from './decoding';
+import { fetchJSON } from './http';
 
 /**
  * Download declaration pdf
@@ -45,29 +38,15 @@ export const downloadPdf = async ({
   const url = baseUrl + `/declaration/download?sid=${submitId}`;
   const hash = await sha512(password);
   const authHash = btoa(`${username}:${hash}`);
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', url);
-  xhr.setRequestHeader('Authorization', `Basic ${authHash}`);
-  const promise = new Promise((resolve, reject) => {
-    xhr.onerror = (): void => {
-      reject(new HttpError(xhr.status));
-    };
-    xhr.onload = (): void => {
-      if (xhr.status >= 400) {
-        reject(new HttpError(xhr.status));
-        return;
-      }
 
-      try {
-        const { filename, data } = JSON.parse(xhr.response);
-        saveAs(base64toBlob(data, 'application/pdf'), filename);
-        resolve();
-      } catch {
-        reject(new Error('Steuerbot-Browser-SDK: Error saving pdf'));
-      }
-    };
+  const { filename, data } = await fetchJSON(url, {
+    headers: {
+      Authorization: `Basic ${authHash}`,
+    },
   });
-  xhr.send();
-  // wait for download to finish
-  await promise;
+  try {
+    saveAs(base64toBlob(data, 'application/pdf'), filename);
+  } catch {
+    throw new Error('Steuerbot-Browser-SDK: Error saving pdf');
+  }
 };
