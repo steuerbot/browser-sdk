@@ -1,3 +1,4 @@
+export declare const sha512: (str: any) => Promise<string>;
 /**
  * Create a blob out of a base64 string
  * @link https://stackoverflow.com/a/16245768/2422977

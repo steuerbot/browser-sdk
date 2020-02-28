@@ -1,3 +1,10 @@
+export const sha512 = async (str): Promise<string> => {
+  const buf = await crypto.subtle.digest('SHA-512', new TextEncoder().encode(str));
+  const hashArray = Array.from(new Uint8Array(buf));
+  const hashHex: string = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+};
+
 /**
  * Create a blob out of a base64 string
  * @link https://stackoverflow.com/a/16245768/2422977
