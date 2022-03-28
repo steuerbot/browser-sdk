@@ -1,12 +1,20 @@
 import { HttpError } from '..';
 
 interface HttpOptions {
-  method?: string;
-  headers?: { [key: string]: any };
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  headers?: Record<string, any>;
+  data?: Record<string, any>;
 }
 
-export const fetchResponse = async (url, { method = 'GET', headers }: HttpOptions = {}): Promise<any> => {
+export const fetchResponse = async (url, { method = 'GET', headers, data }: HttpOptions = {}): Promise<any> => {
   const xhr = new XMLHttpRequest();
+  if (method === 'GET' && data) {
+    const dataArray = [];
+    for (const key in data) {
+      dataArray.push(`${key}=${encodeURIComponent(data[key])}`);
+    }
+    url += `?${dataArray.join('&')}`;
+  }
   xhr.open(method, url);
   if (headers) {
     for (const key in headers) {

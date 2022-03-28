@@ -30,3 +30,37 @@ export const resetPassword = async ({ id, password, baseUrl }: { id: string; pas
     },
   });
 };
+
+/**
+ * Request change of email
+ * @param {string} newEmail - The new user email
+ * @param {string} token - The token needed to execute this action
+ * @param {string} [baseUrl] - The base url for the api
+ */
+export const requestEmailChange = async ({
+  newEmail,
+  token,
+  baseUrl,
+}: {
+  newEmail: string;
+  token: string;
+  baseUrl?: string;
+}) => {
+  if (!newEmail) {
+    throw new Error('Steuerbot-Browser-SDK: No newEmail given');
+  }
+  if (!token) {
+    throw new Error('Steuerbot-Browser-SDK: No token given');
+  }
+  baseUrl = baseUrl || getConfig().url;
+  if (!baseUrl) {
+    throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+  }
+  return await fetchResponse(`${baseUrl}/passwordless/email/confirm/${token}`, {
+    method: 'GET',
+    data: {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      new_email: newEmail,
+    },
+  });
+};

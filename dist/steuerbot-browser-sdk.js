@@ -130,11 +130,18 @@
     };
 
     var fetchResponse = function (url, _a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.method, method = _c === void 0 ? 'GET' : _c, headers = _b.headers;
+        var _b = _a === void 0 ? {} : _a, _c = _b.method, method = _c === void 0 ? 'GET' : _c, headers = _b.headers, data = _b.data;
         return __awaiter(void 0, void 0, void 0, function () {
-            var xhr, key, promise;
+            var xhr, dataArray, key, key, promise;
             return __generator(this, function (_d) {
                 xhr = new XMLHttpRequest();
+                if (method === 'GET' && data) {
+                    dataArray = [];
+                    for (key in data) {
+                        dataArray.push(key + "=" + encodeURIComponent(data[key]));
+                    }
+                    url += "?" + dataArray.join('&');
+                }
                 xhr.open(method, url);
                 if (headers) {
                     for (key in headers) {
@@ -267,6 +274,40 @@
             });
         });
     };
+    /**
+     * Request change of email
+     * @param {string} newEmail - The new user email
+     * @param {string} token - The token needed to execute this action
+     * @param {string} [baseUrl] - The base url for the api
+     */
+    var requestEmailChange = function (_a) {
+        var newEmail = _a.newEmail, token = _a.token, baseUrl = _a.baseUrl;
+        return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!newEmail) {
+                            throw new Error('Steuerbot-Browser-SDK: No newEmail given');
+                        }
+                        if (!token) {
+                            throw new Error('Steuerbot-Browser-SDK: No token given');
+                        }
+                        baseUrl = baseUrl || getConfig().url;
+                        if (!baseUrl) {
+                            throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+                        }
+                        return [4 /*yield*/, fetchResponse(baseUrl + "/passwordless/email/confirm/" + token, {
+                                method: 'GET',
+                                data: {
+                                    // eslint-disable-next-line @typescript-eslint/camelcase
+                                    new_email: newEmail,
+                                },
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
 
     function HttpError(status) {
         this.name = 'HttpError';
@@ -277,6 +318,7 @@
 
     exports.HttpError = HttpError;
     exports.downloadPdf = downloadPdf;
+    exports.requestEmailChange = requestEmailChange;
     exports.resetPassword = resetPassword;
 
     Object.defineProperty(exports, '__esModule', { value: true });
