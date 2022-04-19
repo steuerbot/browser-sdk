@@ -64,3 +64,33 @@ export const requestEmailChange = async ({
     },
   });
 };
+
+/**
+ * Delete account
+ * @param {string}  token - The token needed to execute this action
+ * @param {boolean} [force] - Force account deletion if there are already submissions
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+export const deleteAccount = async ({
+  token,
+  baseUrl,
+  force,
+}: {
+  token: string;
+  baseUrl?: string;
+  force?: boolean;
+}) => {
+  if (!token) {
+    throw new Error('Steuerbot-Browser-SDK: No token given');
+  }
+  baseUrl = baseUrl || getConfig().url;
+  if (!baseUrl) {
+    throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+  }
+  return await fetchResponse(`${baseUrl}/passwordless/delete/confirm/${token}`, {
+    method: 'GET',
+    data: {
+      force,
+    },
+  });
+};

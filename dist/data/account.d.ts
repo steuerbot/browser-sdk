@@ -20,3 +20,14 @@ export declare const requestEmailChange: ({ newEmail, token, baseUrl, }: {
     token: string;
     baseUrl?: string;
 }) => Promise<any>;
+/**
+ * Delete account
+ * @param {string}  token - The token needed to execute this action
+ * @param {boolean} [force] - Force account deletion if there are already submissions
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+export declare const deleteAccount: ({ token, baseUrl, force, }: {
+    token: string;
+    baseUrl?: string;
+    force?: boolean;
+}) => Promise<any>;

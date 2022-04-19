@@ -308,6 +308,36 @@
             });
         });
     };
+    /**
+     * Delete account
+     * @param {string}  token - The token needed to execute this action
+     * @param {boolean} [force] - Force account deletion if there are already submissions
+     * @param {string}  [baseUrl] - The base url for the api
+     */
+    var deleteAccount = function (_a) {
+        var token = _a.token, baseUrl = _a.baseUrl, force = _a.force;
+        return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!token) {
+                            throw new Error('Steuerbot-Browser-SDK: No token given');
+                        }
+                        baseUrl = baseUrl || getConfig().url;
+                        if (!baseUrl) {
+                            throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+                        }
+                        return [4 /*yield*/, fetchResponse(baseUrl + "/passwordless/delete/confirm/" + token, {
+                                method: 'GET',
+                                data: {
+                                    force: force,
+                                },
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
 
     function HttpError(status) {
         this.name = 'HttpError';
@@ -317,6 +347,7 @@
     HttpError.prototype = Error.prototype;
 
     exports.HttpError = HttpError;
+    exports.deleteAccount = deleteAccount;
     exports.downloadPdf = downloadPdf;
     exports.requestEmailChange = requestEmailChange;
     exports.resetPassword = resetPassword;
