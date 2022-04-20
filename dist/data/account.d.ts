@@ -40,3 +40,12 @@ export declare const deletePassword: ({ token, baseUrl }: {
     token: string;
     baseUrl?: string;
 }) => Promise<any>;
+/**
+ * Confirm email
+ * @param {string}  token - The token needed to execute this action
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+export declare const confirmEmail: ({ token, baseUrl }: {
+    token: string;
+    baseUrl?: string;
+}) => Promise<any>;

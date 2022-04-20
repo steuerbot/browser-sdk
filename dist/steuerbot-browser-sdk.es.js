@@ -358,6 +358,36 @@ var deletePassword = function (_a) {
         });
     });
 };
+/**
+ * Confirm email
+ * @param {string}  token - The token needed to execute this action
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+var confirmEmail = function (_a) {
+    var token = _a.token, baseUrl = _a.baseUrl;
+    return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    if (!token) {
+                        throw new Error('Steuerbot-Browser-SDK: No token given');
+                    }
+                    baseUrl = baseUrl || getConfig().url;
+                    if (!baseUrl) {
+                        throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+                    }
+                    return [4 /*yield*/, fetchResponse(baseUrl + "/email", {
+                            method: 'GET',
+                            data: {
+                                confirm: token,
+                                deeplink: true,
+                            },
+                        })];
+                case 1: return [2 /*return*/, _b.sent()];
+            }
+        });
+    });
+};
 
 function HttpError(status) {
     this.name = 'HttpError';
@@ -366,4 +396,4 @@ function HttpError(status) {
 }
 HttpError.prototype = Error.prototype;
 
-export { HttpError, deleteAccount, deletePassword, downloadPdf, requestEmailChange, resetPassword };
+export { HttpError, confirmEmail, deleteAccount, deletePassword, downloadPdf, requestEmailChange, resetPassword };

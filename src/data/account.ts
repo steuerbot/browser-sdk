@@ -112,3 +112,25 @@ export const deletePassword = async ({ token, baseUrl }: { token: string; baseUr
     method: 'GET',
   });
 };
+
+/**
+ * Confirm email
+ * @param {string}  token - The token needed to execute this action
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+export const confirmEmail = async ({ token, baseUrl }: { token: string; baseUrl?: string }) => {
+  if (!token) {
+    throw new Error('Steuerbot-Browser-SDK: No token given');
+  }
+  baseUrl = baseUrl || getConfig().url;
+  if (!baseUrl) {
+    throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+  }
+  return await fetchResponse(`${baseUrl}/email`, {
+    method: 'GET',
+    data: {
+      confirm: token,
+      deeplink: true,
+    },
+  });
+};
