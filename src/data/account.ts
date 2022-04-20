@@ -94,3 +94,21 @@ export const deleteAccount = async ({
     },
   });
 };
+
+/**
+ * Delete password
+ * @param {string}  token - The token needed to execute this action
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+export const deletePassword = async ({ token, baseUrl }: { token: string; baseUrl?: string }) => {
+  if (!token) {
+    throw new Error('Steuerbot-Browser-SDK: No token given');
+  }
+  baseUrl = baseUrl || getConfig().url;
+  if (!baseUrl) {
+    throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+  }
+  return await fetchResponse(`${baseUrl}/password/delete/confirm/${token}`, {
+    method: 'GET',
+  });
+};

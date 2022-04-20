@@ -31,3 +31,12 @@ export declare const deleteAccount: ({ token, baseUrl, force, }: {
     baseUrl?: string;
     force?: boolean;
 }) => Promise<any>;
+/**
+ * Delete password
+ * @param {string}  token - The token needed to execute this action
+ * @param {string}  [baseUrl] - The base url for the api
+ */
+export declare const deletePassword: ({ token, baseUrl }: {
+    token: string;
+    baseUrl?: string;
+}) => Promise<any>;

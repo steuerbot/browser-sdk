@@ -338,6 +338,32 @@
             });
         });
     };
+    /**
+     * Delete password
+     * @param {string}  token - The token needed to execute this action
+     * @param {string}  [baseUrl] - The base url for the api
+     */
+    var deletePassword = function (_a) {
+        var token = _a.token, baseUrl = _a.baseUrl;
+        return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!token) {
+                            throw new Error('Steuerbot-Browser-SDK: No token given');
+                        }
+                        baseUrl = baseUrl || getConfig().url;
+                        if (!baseUrl) {
+                            throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
+                        }
+                        return [4 /*yield*/, fetchResponse(baseUrl + "/password/delete/confirm/" + token, {
+                                method: 'GET',
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
 
     function HttpError(status) {
         this.name = 'HttpError';
@@ -348,6 +374,7 @@
 
     exports.HttpError = HttpError;
     exports.deleteAccount = deleteAccount;
+    exports.deletePassword = deletePassword;
     exports.downloadPdf = downloadPdf;
     exports.requestEmailChange = requestEmailChange;
     exports.resetPassword = resetPassword;
