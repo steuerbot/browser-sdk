@@ -1,6 +1,6 @@
 {
   "name": "@steuerbot/browser-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Browser SDK for building amazing web bots",
   "main": "dist/steuerbot-browser-sdk.js",
   "module": "dist/steuerbot-browser-sdk.es.js",
