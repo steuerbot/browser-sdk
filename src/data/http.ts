@@ -1,12 +1,21 @@
 import { HttpError } from '..';
 
 interface HttpOptions {
-  method?: string;
-  headers?: { [key: string]: any };
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  headers?: Record<string, any>;
+  query?: Record<string, any>;
+  body?: Record<string, any>;
 }
 
-export const fetchResponse = async (url, { method = 'GET', headers }: HttpOptions = {}): Promise<any> => {
+export const fetchResponse = async (url, { method = 'GET', headers, query, body }: HttpOptions = {}): Promise<any> => {
   const xhr = new XMLHttpRequest();
+  if (query) {
+    const dataArray = [];
+    for (const key in query) {
+      dataArray.push(`${key}=${encodeURIComponent(query[key])}`);
+    }
+    url += `?${dataArray.join('&')}`;
+  }
   xhr.open(method, url);
   if (headers) {
     for (const key in headers) {
@@ -25,7 +34,7 @@ export const fetchResponse = async (url, { method = 'GET', headers }: HttpOption
       resolve(xhr.response);
     };
   });
-  xhr.send();
+  xhr.send(body ? JSON.stringify(body) : undefined);
   // wait for download to finish
   return promise;
 };
