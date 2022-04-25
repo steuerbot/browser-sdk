@@ -57,10 +57,9 @@ export const requestEmailChange = async ({
     throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
   }
   return await fetchResponse(`${baseUrl}/passwordless/email/confirm/${token}`, {
-    method: 'GET',
-    data: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      new_email: newEmail,
+    method: 'PATCH',
+    body: {
+      newEmail,
     },
   });
 };
@@ -88,8 +87,8 @@ export const deleteAccount = async ({
     throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
   }
   return await fetchResponse(`${baseUrl}/passwordless/delete/confirm/${token}`, {
-    method: 'GET',
-    data: {
+    method: 'DELETE',
+    query: {
       force,
     },
   });
@@ -109,7 +108,7 @@ export const deletePassword = async ({ token, baseUrl }: { token: string; baseUr
     throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
   }
   return await fetchResponse(`${baseUrl}/password/delete/confirm/${token}`, {
-    method: 'GET',
+    method: 'DELETE',
   });
 };
 
@@ -128,7 +127,7 @@ export const confirmEmail = async ({ token, baseUrl }: { token: string; baseUrl?
   }
   return await fetchResponse(`${baseUrl}/email`, {
     method: 'GET',
-    data: {
+    query: {
       confirm: token,
       deeplink: true,
     },

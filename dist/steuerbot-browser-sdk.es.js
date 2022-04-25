@@ -124,15 +124,15 @@ var base64toBlob = function (b64Data, contentType, sliceSize) {
 };
 
 var fetchResponse = function (url, _a) {
-    var _b = _a === void 0 ? {} : _a, _c = _b.method, method = _c === void 0 ? 'GET' : _c, headers = _b.headers, data = _b.data;
+    var _b = _a === void 0 ? {} : _a, _c = _b.method, method = _c === void 0 ? 'GET' : _c, headers = _b.headers, query = _b.query, body = _b.body;
     return __awaiter(void 0, void 0, void 0, function () {
         var xhr, dataArray, key, key, promise;
         return __generator(this, function (_d) {
             xhr = new XMLHttpRequest();
-            if (method === 'GET' && data) {
+            if (query) {
                 dataArray = [];
-                for (key in data) {
-                    dataArray.push(key + "=" + encodeURIComponent(data[key]));
+                for (key in query) {
+                    dataArray.push(key + "=" + encodeURIComponent(query[key]));
                 }
                 url += "?" + dataArray.join('&');
             }
@@ -154,7 +154,7 @@ var fetchResponse = function (url, _a) {
                     resolve(xhr.response);
                 };
             });
-            xhr.send();
+            xhr.send(body ? JSON.stringify(body) : undefined);
             // wait for download to finish
             return [2 /*return*/, promise];
         });
@@ -291,10 +291,9 @@ var requestEmailChange = function (_a) {
                         throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
                     }
                     return [4 /*yield*/, fetchResponse(baseUrl + "/passwordless/email/confirm/" + token, {
-                            method: 'GET',
-                            data: {
-                                // eslint-disable-next-line @typescript-eslint/camelcase
-                                new_email: newEmail,
+                            method: 'PATCH',
+                            body: {
+                                newEmail: newEmail,
                             },
                         })];
                 case 1: return [2 /*return*/, _b.sent()];
@@ -322,8 +321,8 @@ var deleteAccount = function (_a) {
                         throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
                     }
                     return [4 /*yield*/, fetchResponse(baseUrl + "/passwordless/delete/confirm/" + token, {
-                            method: 'GET',
-                            data: {
+                            method: 'DELETE',
+                            query: {
                                 force: force,
                             },
                         })];
@@ -351,7 +350,7 @@ var deletePassword = function (_a) {
                         throw new Error('Steuerbot-Browser-SDK: No baseUrl given');
                     }
                     return [4 /*yield*/, fetchResponse(baseUrl + "/password/delete/confirm/" + token, {
-                            method: 'GET',
+                            method: 'DELETE',
                         })];
                 case 1: return [2 /*return*/, _b.sent()];
             }
@@ -378,7 +377,7 @@ var confirmEmail = function (_a) {
                     }
                     return [4 /*yield*/, fetchResponse(baseUrl + "/email", {
                             method: 'GET',
-                            data: {
+                            query: {
                                 confirm: token,
                                 deeplink: true,
                             },

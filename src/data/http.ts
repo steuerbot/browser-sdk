@@ -3,15 +3,16 @@ import { HttpError } from '..';
 interface HttpOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, any>;
-  data?: Record<string, any>;
+  query?: Record<string, any>;
+  body?: Record<string, any>;
 }
 
-export const fetchResponse = async (url, { method = 'GET', headers, data }: HttpOptions = {}): Promise<any> => {
+export const fetchResponse = async (url, { method = 'GET', headers, query, body }: HttpOptions = {}): Promise<any> => {
   const xhr = new XMLHttpRequest();
-  if (method === 'GET' && data) {
+  if (query) {
     const dataArray = [];
-    for (const key in data) {
-      dataArray.push(`${key}=${encodeURIComponent(data[key])}`);
+    for (const key in query) {
+      dataArray.push(`${key}=${encodeURIComponent(query[key])}`);
     }
     url += `?${dataArray.join('&')}`;
   }
@@ -33,7 +34,7 @@ export const fetchResponse = async (url, { method = 'GET', headers, data }: Http
       resolve(xhr.response);
     };
   });
-  xhr.send();
+  xhr.send(body ? JSON.stringify(body) : undefined);
   // wait for download to finish
   return promise;
 };
